@@ -1,9 +1,4 @@
 
-# Node JS Boilerpalte 
-
-Backend Node js powered boilerplate 
-
-
 ## Setup PostgreSQL database locally 
 
     1.  Download and Install PostgresSQL locally and set it up to run with a superuser
