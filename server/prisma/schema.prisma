@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum VerificationType {
+  ACCOUNT_VERIFY
+  PASSWORD_RESET
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  password      String    
+  firstName     String?
+  lastName      String?
+  role          Role      @default(ADMIN)
+  phone         String?
+  emailVerified Boolean   @default(false)
+  isActive      Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+
+  userEmailVerifications UserEmailVerification[]
+  voucherCodes VoucherCode[]
+}
+
+model UserEmailVerification {
+  id          Int               @id @default(autoincrement())
+  code        String            @default(uuid()) @unique
+  verified    Boolean           @default(false)
+  type        VerificationType
+  verifiedAt  DateTime?         @updatedAt 
+  createdAt   DateTime          @default(now())
+  userId      Int
+  user        User              @relation(fields: [userId],references: [id])
+
+}
+
+model PromoOffer {
+  id          Int               @id @default(autoincrement())
+  name        String           
+  percentage  Int          
+
+  voucherCodes VoucherCode[]  
+
+}
+
+model VoucherCode {
+  id            Int               @id @default(autoincrement())
+  code          String            @unique
+  expireDate    DateTime            
+  isValid       Boolean           @default(true)
+  dateUsed      DateTime?          
+  createdAt     DateTime          @default(now())
+
+  userId        Int
+  user          User              @relation(fields: [userId],references: [id])
+
+  promoOfferId  Int
+  promoOffer    PromoOffer        @relation(fields: [promoOfferId],references: [id])
+
+}

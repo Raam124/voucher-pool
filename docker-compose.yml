@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: ./
+      dockerfile: ./server/Dockerfile
+    command: npm run dev
+    volumes:
+      - .:/app/
+      - /app/node_modules
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    environment:
+      DATABASE_URL: postgresql://nodeuser:boilerplatepass@database:5432/nodeboilerplate?connect_timeout=300
+      APPLICATION_HOST : http://localhost:3000
+      JWT_SECRET : nodejsboilerplate
+      NODE_ENV : development
+      SENDGRID_API_KEY : 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
+      SENDGRID_SENDER_EMAIL : raamcubi@gmail.com
+
+  database:
+    hostname: database
+    image: postgres
+    environment:
+      POSTGRES_USER: nodeuser
+      POSTGRES_PASSWORD: boilerplatepass
+      POSTGRES_DB: nodeboilerplate
+    expose:
+      - '5432'
+    ports:
+      - 5432:5432
+    volumes:
+      - nodejs-boilerplate-database-data:/var/lib/postgresql/data
+    command: ["postgres", "-c", "log_statement=all"]
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    depends_on:
+      - database
+    ports:
+      - "5555:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    restart: unless-stopped
+
+volumes:
+  nodejs-boilerplate-database-data:
+  pgadmin-data:
