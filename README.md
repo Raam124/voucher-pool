@@ -82,7 +82,7 @@ Make sure to stop the local PostgreSQL server
 Clone the project
 
 ```bash
-  git clone https://link-to-project
+  git clone [https://link-to-project](https://github.com/Raam124/voucher-pool.git)
 ```
 
 Run docker 
